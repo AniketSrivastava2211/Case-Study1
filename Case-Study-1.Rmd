@@ -1,0 +1,575 @@
+---
+title: "Case Study 1:How Does a Bike-Share Navigate Speedy Success?"
+author: "Aniket Srivastava"
+date: "2023-07-25"
+output: html_document
+---
+
+## Introduction
+
+In the bustling urban landscape of today, sustainable transportation solutions have gained immense popularity. Among these solutions, bike-sharing systems have emerged as a convenient and eco-friendly mode of travel. This case study explores the rapid success of Cyclistic, a fictional bike-share company, and showcases the data analysis process using the framework taught in the Google Data Analytics Professional Certificate: **ask, prepare, process, analyze, share,** and **act**.
+
+### Scenario
+
+As a junior data analyst at Cyclistic, a leading bike-share company in Chicago, I find myself in an exciting and pivotal position. The director of marketing has entrusted my team with a crucial mission - to uncover the nuances in how casual riders and annual members utilize Cyclistic bikes differently. This valuable information will be the cornerstone for devising a new, data-driven marketing strategy aimed at enticing casual riders to transition into loyal annual members. The success of this endeavor hinges on presenting our recommendations with compelling data insights and professional data visualizations, gaining the much-needed approval from Cyclistic executives.
+
+### Characters and teams
+
+
+* **Cyclistic:** A bike-share program with 5,824 bicycles and 692 docking stations. The program offers a wide range of bicycles from traditional bikes to assistive options such as: reclining bikes, hand tricycles and cargo bikes. About 70% of Cyclistic’s customers uses the program for leisure, while roughly 30% of the customers are using it to commute to work every day.
+
+* **Lily Moreno:** The director of marketing. Moreno is responsible for the development of campaigns and initiatives to promote the bike-share program. These may include email, social media, and other channels.
+
+* **Cyclistic marketing analytics team:** A team of data analysts who are responsible for collecting, analyzing, and reporting data that helps guide Cyclistic marketing strategy.
+
+* **Cyclistic executive team:** The notoriously detail-oriented executive team will decide whether to approve the recommended marketing program.
+
+### About the company
+
+Cyclistic is a successful bike-share company in Chicago, boasting a fleet of 5,824 geotracked bicycles across 692 stations. Their pricing flexibility caters to both casual riders and annual members, with the latter proving to be significantly more profitable.
+
+Moreno, our director of marketing, aims to maximize the number of annual members by devising strategies to convert casual riders into loyal members. Recognizing the potential in targeting existing customers, Moreno believes that analyzing historical bike trip data will unlock valuable insights to tailor effective marketing tactics. Our goal is to leverage these data-driven findings to propel Cyclistic's growth and cement its position as a leader in the bike-sharing industry.
+
+<br>
+
+## Ask
+
+**Deliverable: To provide a clear statement of the business task.**
+
+### Problem
+
+Finding a way so that the casual riders convert into annual members, in order to make the company more profitable
+
+
+### Business Task:
+
+The business task is to develop a data-driven marketing strategy with a focus on converting casual riders into annual members, thus maximizing the number of annual members and making Cyclistic more profitable. To achieve this, the marketing analyst team will address the following three questions:
+
+**Usage Differences:** How do annual members and casual riders use Cyclistic bikes differently? Understanding the distinctive patterns of bike usage between these two groups will provide valuable insights for tailoring targeted marketing campaigns.
+
+**Motivating Factors:** Why would casual riders buy Cyclistic annual memberships? Identifying the motivations behind casual riders' decisions to purchase annual memberships will enable the team to develop compelling value propositions and incentives.
+
+**Digital Media Influence:** How can Cyclistic use digital media to influence casual riders to become members? Exploring the most effective digital marketing tactics will empower the team to design persuasive online campaigns aimed at converting casual riders into loyal annual members.
+
+As a data analyst i am tasked with answering the question, **"How do annual members and casual riders use Cyclistic bikes differently?"**
+
+### Key Stakeholders
+
+* **Lily Moreno:** The director of marketing and manager. Moreno is responsible for the development of campaigns and initiatives to promote the bike-share program. These may include email, social media, and other channels
+* **Cyclistic executive team:** The detail-oriented executive team that decides whether to approve the recommended marketing program.
+
+<br>
+
+## Prepare
+
+**Deliverable:A description of all data sources used**
+
+As a data analyst, I will utilize Cyclistic's historical bike trip data for the analysis. The data source link is available at [DataDivvy](https://divvybikes.com/system-data).
+
+I will focus on utilizing the historical bike trip data from Cyclistic for the analysis. The dataset is divided into three different time periods: 2013-2014, 2015-Q1 2020, and Q2 2020 - Q1 2023. For this particular task, we are interested in the last 12 months of records, spanning from July 2022 to June 2023. This time range simplifies the analysis since all the data within this period will have a consistent structure and format.
+
+The dataset consists of 12 CSV-files, each containing records of every ride made by both casual and annual member customers of the bike-share company.
+
+For every ride recorded in the dataset, we can extract valuable information such as the start and end date and time, GPS coordinates, start and end station IDs and names, rider type (member or casual), and the type of bike used during the ride.
+
+By focusing on the data from the last 12 months and considering ride start dates within the specified range, we can conduct a thorough analysis of the usage patterns between annual members and casual riders, providing insights to address Moreno's first question effectively.
+
+### Credibility of the Data
+
+The credibility of the data used for this analysis is upheld through its official source and adherence to the data license agreement. The dataset comes from Cyclistic, a reputable bike-share company in Chicago, ensuring the reliability and authenticity of the information.
+
+The data license agreement serves as a legal framework that governs the use and distribution of the data. It outlines the terms and conditions, ensuring that the data is used responsibly and in accordance with privacy and data protection regulations. The agreement provides assurance that the data is collected ethically and is available for analysis and research purposes, granting us the necessary permissions to work with the data in compliance with legal and ethical standards.
+
+For a comprehensive understanding of the data license agreement and its implications, the link to the official document can be found here: [Data License Agreement](https://ride.divvybikes.com/data-license-agreement). By adhering to the agreement's guidelines, we uphold the integrity and credibility of our analysis, ensuring that the findings and insights are derived from trustworthy and validated data sources.
+
+
+<br>
+
+## Process
+
+**Deliverable:Documentation of any cleaning or manipulation of data**
+
+Using RStudio is a prudent decision for this analysis, given the large size of the dataset and the need for efficient data cleaning, analysis, and visualization.
+
+### Step 1: Setting up the environment and importing the data
+
+To begin the data cleaning and analysis process in RStudio, we need to install and load the necessary packages. We'll be using the following packages:
+
+*tidyverse:* A collection of packages that provide essential data manipulation and visualization functions.
+
+*lubridate:* For working with date and time data.
+
+*ggplot2:* A powerful package for creating visualizations.
+
+*dplyr*: For data wrangling and transformation.
+
+*readr:* For reading CSV files and handling data import.
+
+```{r install packages, results = "hold", message = FALSE, eval = FALSE}
+# Install packages 
+install.packages("tidyverse")
+install.packages("skimr") #for viewing and evaluating the data
+install.packages("ggplot2") #for visualizations
+install.packages("geosphere")
+```
+
+```{r load packages, results = "hold", message = FALSE}
+# Load packages
+library(tidyverse)
+library(lubridate)
+library(ggplot2)
+library(readr)
+library(dplyr)
+library(skimr)
+library(geosphere)
+```
+
+### Step 2: Importing the Data
+
+In this step, we will efficiently import the 12 CSV files into RStudio and seamlessly merge them into a unified data frame, simplifying the data manipulation process for our analysis.
+
+Importing the Data for each month:
+
+```{r import data, results = "hold"}
+#Import Data
+
+july_2022 <- read.csv("~/RStudio/Project1/XLS 2022-23/july2022.csv")
+august_2022 <- read.csv("~/RStudio/Project1/XLS 2022-23/aug2022.csv")
+september_2022 <- read.csv("~/RStudio/Project1/XLS 2022-23/sept2022.csv")
+october_2022 <- read.csv("~/RStudio/Project1/XLS 2022-23/oct2022.csv")
+november_2022 <- read.csv("~/RStudio/Project1/XLS 2022-23/nov2022.csv")
+december_2022 <- read.csv("~/RStudio/Project1/XLS 2022-23/dec2022.csv")
+january_2023 <- read.csv("~/RStudio/Project1/XLS 2022-23/jan2023.csv")
+february_2023 <- read.csv("~/RStudio/Project1/XLS 2022-23/feb2023.csv")
+march_2023 <- read.csv("~/RStudio/Project1/XLS 2022-23/march2023.csv")
+april_2023 <- read.csv("~/RStudio/Project1/XLS 2022-23/april2023.csv")
+may_2023 <- read.csv("~/RStudio/Project1/XLS 2022-23/may2023.csv")
+june_2023 <- read.csv("~/RStudio/Project1/XLS 2022-23/june2023.csv")
+
+```
+To ensure that each dataset has exactly the same column names, we can use the *colnames()* function in R to check the column names for each dataset. If the column names match across all datasets, it indicates that they have consistent structure and can be combined into a single data frame seamlessly.
+
+```{r check colnames, results='hide'}
+#Checking Column Names
+
+colnames(july_2022)
+colnames(august_2022)
+colnames(september_2022)
+colnames(october_2022)
+colnames(november_2022)
+colnames(december_2022)
+colnames(january_2023)
+colnames(february_2023)
+colnames(march_2023)
+colnames(april_2023)
+colnames(may_2023)
+colnames(june_2023)
+```
+
+
+To combine all 12 months of datasets into a single data frame, we can use the *bind_rows()* function from the dplyr package. This function concatenates data frames by rows, effectively merging them into one unified data frame.
+
+```{r combine datasets}
+yearly_data <- bind_rows(july_2022, august_2022, september_2022,october_2022,november_2022,
+                         december_2022,january_2023,february_2023,march_2023, april_2023,
+                         may_2023,june_2023)
+```
+
+
+The dataset under review presents an issue where the date and time columns are in character format by default. As a result, before proceeding with data analysis, we must convert these two columns into the appropriate date-time(POSIXct) format. This conversion ensures accurate temporal analysis and enables us to leverage date-related functionalities in R for a comprehensive and reliable examination of the data.
+
+```{r Converting data type into date-time format}
+#Converting the data type of columns started_at and ended_at to DateTime Format
+clean_data <- yearly_data %>%
+  mutate(started_at = as.POSIXct(started_at, format = "%Y-%m-%d %H:%M:%S"),
+         ended_at = as.POSIXct(ended_at, format = "%Y-%m-%d %H:%M:%S"))
+```
+
+
+To verify whether our data has been successfully combined, we can use the skimr package to generate a comprehensive summary of the merged dataset. This summary will provide valuable insights into the structure and content of the combined data, ensuring that the merging process was successful and facilitating further analysis.
+
+```{r overview_of_yearly_data, echo=TRUE}
+#Check Combined Data
+skim_without_charts(clean_data)
+
+
+```
+
+#### Data Summary
+
+
+The dataset contains 5,382,546 rows and 13 columns, giving us a comprehensive understanding of its dimensions and structure.
+Moreover, we noticed some columns with missing values:
+
+start_station_name: 857,860 missing values
+start_station_id: 857,992 missing values
+end_station_name: 915,655 missing values
+end_station_id: 915,796 missing values
+end_lat: 5,795 missing values
+end_lng: 5,795 missing values
+
+Additionally, we identified discrepancies in the start_lng and end_lng columns. The majority of the data corresponds to Chicago, but some entries have a value of 0, which seems to be erroneous.
+
+It's essential to address these missing values and errors to ensure the accuracy and reliability of our dataset for further analysis.
+
+### Step 3: Cleaning the Data
+
+Following a thorough review of our combined dataset's data summary, it has become apparent that some data cleaning is necessary. There are missing values in certain columns, and we've identified potential errors in others.
+
+To ensure the integrity and reliability of our data, we are taking the proactive step of initiating a data cleaning process. By addressing missing values and correcting any inaccuracies or anomalies, we aim to create a more robust and trustworthy dataset for our analysis and future use.
+
+#### Checking the time duration of trips and adding a column to the data
+
+```{r time duration of trips}
+
+clean_data1 <- clean_data %>%
+  mutate(trip_duration_minutes = as.numeric(difftime(ended_at, started_at, units = "mins")))
+
+```
+
+#### Step 3.1: Removing the empty values from the data
+
+In this data cleaning process, we remove empty (whitespace-only) values from the "station name" and "station ID" columns. This ensures a more reliable dataset for analysis.
+
+```{r removing null values}
+#Removing empty values from the station name and id columns
+
+library(stringr)
+
+clean_data1 <- clean_data1 %>%
+  filter(
+    !(str_trim(start_station_name) == "" | 
+        str_trim(start_station_id) == "" | 
+        str_trim(end_station_name) == "" | 
+        str_trim(end_station_id) == "")
+  )
+```
+
+We check the cleaned data once-
+
+```{r}
+
+skim_without_charts(clean_data1)
+```
+
+#### Step 3.2: Removing the null values, and the incorrect geographical coordinates from the data
+
+In this data cleaning process, we eliminate null values and incorrect geographical coordinates (latitude and longitude) from the dataset.
+
+```{r}
+clean_data2 <- clean_data1 %>%
+  filter(
+    !is.na(end_lat) & !is.na(end_lng) &
+      is.numeric(end_lat) & is.numeric(end_lng) &
+      end_lat >= -90 & end_lat <= 90 &    # Latitude ranges from -90 to 90 degrees
+      end_lng >= -180 & end_lng <= 180   # Longitude ranges from -180 to 180 degrees
+  )
+  
+```
+
+We check the cleaned data once-
+
+```{r}
+
+skim_without_charts(clean_data2)
+```
+
+#### Step 3.3: Removing the negative trip durations from the data
+
+In the summarized data, we observe negative trip durations, which are illogical and should be removed from the dataset to ensure data cleanliness.
+
+In addition to removing negative trip durations, we also notice that some trip durations in the data exceed 24 hours, which is implausible. To maintain data integrity and ensure meaningful analysis, we will remove these trips with durations exceeding 24 hours.
+
+```{r}
+
+#Removing the negative trip durations 
+
+clean_data3 <- clean_data2 %>%
+  filter(trip_duration_minutes > 0 & trip_duration_minutes <= 1440) 
+
+```
+
+
+
+
+#### Step 3.4 Data Transformation-
+
+Let's explore how we can effectively transform the data to analyze how annual members and casual riders utilize the company's bikes differently. We can derive the following metrics from the initial dataset:
+
+Step 1: Ride Duration in Minutes
+Calculate the duration of customer bike rides in minutes by finding the time difference between the 'started_at' and 'ended_at' columns.
+
+Step 2: Ride Distance in Meters
+Assess the distance covered by customers during their bike rides using the 'geosphere' package's 'distHaversine' function, which calculates distance based on start and end geographical coordinates (latitude and longitude).
+
+Step 3: Time of Day Usage
+Extract the hour at which each bike trip started to identify peak usage times during the day.
+
+Step 4: Days of the Week Usage
+Record the day of the week on which each bike ride started to analyze weekly patterns.
+
+Step 5: Monthly Usage
+Note the specific month when each bike trip commenced to understand monthly trends in bike usage.
+
+Step 6: Additional Columns for Aggregation
+Add two new columns, 'start_day' and 'start_month', to facilitate data aggregation.
+
+Step 7: Renaming 'member_casual' Column
+For clarity, rename the 'member_casual' column to 'customer_type'.
+
+
+Assuming your data is stored in a data frame named clean_data3, we will proceed with each step:
+
+```{r}
+#Transformation of the data
+
+
+clean_data4 <- clean_data3 %>%
+  mutate(
+    ride_distance_meters = distHaversine(
+      cbind(start_lng, start_lat),
+      cbind(end_lng, end_lat)
+    ),
+    start_hour = hour(started_at),
+    day_of_week = wday(started_at, label = TRUE),
+    month = month(started_at, label = TRUE),
+    start_day = day(started_at),
+    start_month = month(started_at, label = TRUE),
+    weekday = ifelse(weekdays(started_at) %in% c("Saturday", "Sunday"), FALSE, TRUE)
+  ) %>%
+  rename(customer_type = member_casual)
+```
+
+We also remove the negative trip distances from our data-
+
+```{r}
+#Removing the negative trip  distances
+
+clean_data4 <- clean_data4 %>%
+ filter(trip_duration_minutes > 0 & ride_distance_meters > 0)
+
+```
+
+By following these steps, we can conduct a comprehensive analysis to uncover meaningful distinctions in bike usage between annual members and casual riders. These insights will enable us to better understand customer preferences and behaviors, aiding decision-making and improving services accordingly.
+
+## Analyse
+
+**Deliverable:A summary of the analysis**
+
+In the analysis step, we will explore and analyze the transformed data to gain insights into how annual members and casual riders utilize the company's bikes differently. 
+
+### Step 1: Descriptive Statistics:
+
+Calculate summary statistics for the numerical columns related to ride duration, ride distance, and other relevant metrics for both annual members and casual riders. Use functions like summary(), mean(), median(), etc.
+
+```{r}
+# Summary Statistics for Cleaned Data
+clean_data_summary <- summary(clean_data4$trip_duration_minutes)
+print("Summary Statistics for Overall Trip Duration:")
+print(clean_data_summary)
+
+# Summary Statistics for Casual Riders Trip Duration
+casual_riders_summary <- summary((filter(clean_data4, customer_type == "casual")$trip_duration_minutes))
+print("Summary Statistics for Casual Riders Trip Duration:")
+print(casual_riders_summary)
+
+# Summary Statistics for Member Riders Trip Duration
+member_riders_summary <- summary((filter(clean_data4, customer_type == "member")$trip_duration_minutes))
+print("Summary Statistics for Member Riders Trip Duration:")
+print(member_riders_summary)
+```
+
+Additionally, we compute the total trip duration for each type of customer: casual riders and member riders. This information provides us with a holistic view of the combined time spent by both customer groups using the company's bikes-
+
+```{r}
+# Calculate Total Trip Duration for Casual Riders
+total_trip_duration_casual <- sum(filter(clean_data4, customer_type == "casual")$trip_duration_minutes)
+
+# Calculate Total Trip Duration for Member Riders
+total_trip_duration_member <- sum(filter(clean_data4, customer_type == "member")$trip_duration_minutes)
+
+# Print the Results
+print("Total Trip Duration for Casual Riders (in minutes):")
+print(total_trip_duration_casual)
+
+print("Total Trip Duration for Member Riders (in minutes):")
+print(total_trip_duration_member)
+```
+In the descriptive analysis, we observed the following key points:
+
+Trip Duration: The overall trip duration ranges from 0 to 1439.37 minutes, with an average of approximately 15.99 minutes.
+
+Casual Riders: Their trip duration ranges from 0 to 1439.37 minutes, with an average of approximately 22.37 minutes, indicating longer rides on average.
+
+Member Riders: Their trip duration ranges from 0 to 1436.33 minutes, with an average of approximately 12.09 minutes, suggesting shorter and more frequent trips.
+
+Outliers: We noticed some trip durations of 0 and nearly 1440 minutes, which could be data errors or outliers.
+
+Total Trip Duration: We calculated the total trip duration for both casual and member riders, providing insights into their overall usage patterns. Casual riders have a higher total trip duration compared to member riders.
+
+This initial analysis helps us understand customer behavior and usage patterns, revealing potential areas for further exploration and insights.
+
+### Step 2: Visualization:
+
+
+To gain deeper insights and explore the patterns in our data, we utilize visualizations through various graphs such as histograms, box plots, and bar charts. These visualizations offer an intuitive representation of key metrics and behaviors related to bike rides. By employing the ggplot2 package for data visualization, we can create informative graphs that help us better understand the dataset.
+
+Our visualizations focus on the following aspects:
+
+* **Usage Patterns by Hour:** We will create a bar chart to visualize the hourly usage patterns of the bikes. This will help us identify peak hours when customers use the service the most.
+
+```{r}
+# Visualization of Usage Patterns by Hour
+ggplot(clean_data4, aes(x = start_hour, fill = customer_type)) +
+  geom_bar(position = "dodge") +
+  labs(title = "Usage Patterns by Hour",
+       x = "Hour of the Day",
+       y = "Number of Rides",
+       fill = "Customer Type")
+```
+<br>
+* **Usage Patterns by Day of the Week:** We will use another bar chart to visualize the number of rides on each day of the week. This will allow us to observe trends and differences in bike usage between weekdays and weekends.
+
+```{r}
+# Visualization of Usage Patterns by Day of the Week
+ggplot(clean_data4, aes(x = day_of_week, fill = customer_type)) +
+  geom_bar(position = "dodge") +
+  labs(title = "Usage Patterns by Day of the Week",
+       x = "Day of the Week",
+       y = "Number of Rides",
+       fill = "Customer Type")
+
+```
+<br>
+* **Usage Patterns by Month:** A bar chart will also display bike rides by month, revealing seasonal trends and variations in customer behavior.
+
+```{r}
+# Visualization of Usage Patterns by Month
+ggplot(clean_data4, aes(x = month, fill = customer_type)) +
+  geom_bar(position = "dodge") +
+  labs(title = "Usage Patterns by Month",
+       x = "Month",
+       y = "Number of Rides",
+       fill = "Customer Type")
+```
+<br>
+
+Through these visualizations, we aim to present a comprehensive and clear analysis of how annual members and casual riders use our bike-sharing service differently. The insights derived from the visualizations will support data-driven decision-making, leading to improvements in customer experience and operational efficiency.
+
+### Step 3: Comparison of Ride Count between Annual Members and Casual Riders
+
+```{r}
+# Set custom labels for weekday facet
+weekday_label <- c("Weekend", "Weekday")
+names(weekday_label) <- c("FALSE", "TRUE")
+
+# create a graph for comparison
+clean_data4 %>%
+  group_by(customer_type, weekday) %>%
+  summarize(number_of_rides = n()) %>%
+  ggplot(aes(x = customer_type, y = number_of_rides, fill = customer_type)) +
+  geom_col() +
+  facet_wrap(~weekday, labeller = labeller(weekday = weekday_label)) +
+  labs(title = "Number of Riders for Each Membership",
+       x = "Membership Type",
+       y = "Number of Rides") +
+  scale_y_continuous(labels = scales::comma) +
+  scale_x_discrete(labels = c("Casual Rider", "Cyclistic Member")) +
+  theme(axis.text.x = element_text(angle = 45, margin = margin(t = 20)),
+        legend.position = "none") +
+  geom_text(aes(label = number_of_rides, vjust = 1.5))
+```
+<br>
+
+This comparison sheds light on the distinct riding behaviors of these customer groups, helping us understand their preferences and trends. Such insights can guide service improvements and cater to the specific needs of each customer category.
+
+### Step 4: Average Trip Duration Every Hour by Day of the Week
+
+In this section, we visualize the average trip duration every hour for each customer type (casual and member) across different days of the week.
+
+```{r}
+# Group the data by customer_type, day_of_week, and start_hour, and calculate the average trip duration
+average_duration_data <- clean_data4 %>%
+  group_by(customer_type, day_of_week, start_hour) %>%
+  summarize(average_duration_minutes = mean(trip_duration_minutes))
+
+# Create a line plot to visualize the average duration over hours for each day of the week
+ggplot(average_duration_data, aes(x = start_hour, y = average_duration_minutes, color = customer_type)) +
+  geom_line() +
+  facet_wrap(~ day_of_week, ncol = 3, scales = "free_x") +
+  labs(title = "Average Trip Duration Every Hour by Day of the Week",
+       x = "Hour of the Day",
+       y = "Average Trip Duration (minutes)",
+       color = "Customer Type") +
+  theme_minimal()
+```
+
+### Analysis Summary
+
+In the analysis phase, we explored bike-sharing data to understand the differences in usage between annual members and casual riders. The key findings are as follows:
+
+Trip Duration: Casual riders have longer trips on average (22.37 minutes) compared to member riders (12.09 minutes).
+Peak Usage: We identified peak hours when bike usage is highest and observed higher total trip duration for casual riders.
+Visualizations helped us grasp the patterns:
+
+Hourly Usage: Casual riders and annual members exhibit different hourly usage patterns.
+Day of the Week: Weekday and weekend bike usage differs for both customer types.
+These insights can inform decision-making for service improvements and customer satisfaction.
+
+
+## Share and Act
+
+In the Share and Act phase, we focus on communicating the main insights and findings from our analysis to the stakeholders and providing actionable recommendations to address the business task effectively.
+
+### Key Insights and Findings:
+
+Usage Patterns Differ by Customer Type: Casual riders tend to take longer trips on average, while member riders opt for shorter and more frequent rides.
+
+* **Peak Usage Hours:** We identified peak hours when bike usage is at its highest. Understanding these peak hours can help optimize bike availability and distribution.
+
+* **Weekday vs. Weekend Usage:** Bike usage shows variations between weekdays and weekends for both casual and member riders. Tailoring promotional strategies and offers based on these usage patterns could attract more riders.
+
+* **Total Trip Duration:** The total trip duration for casual riders exceeds that of member riders, suggesting potential opportunities to convert casual riders into long-term members.
+
+### Recommendations:
+
+Targeted Marketing Campaigns: Develop targeted marketing campaigns to attract more casual riders during off-peak hours or low-demand days. Special discounts or incentives can encourage ridership during less busy times.
+
+Membership Benefits: Enhance membership benefits for annual members to incentivize longer and more frequent rides. Offer rewards for exceeding a certain number of trips per month or provide exclusive access to events and partner discounts.
+
+Improved Bike Distribution: Optimize bike distribution during peak hours to ensure bikes are readily available at high-demand stations. Real-time data analysis can help predict and manage bike availability more efficiently.
+
+Weekday Promotions: Introduce weekday-specific promotions to engage more riders during weekdays. For instance, offer discounted rates for short trips during lunch hours or after work.
+
+User Experience Enhancement: Gather feedback from both casual and member riders to identify pain points and areas for improvement in the bike-sharing experience. Implement enhancements based on user feedback to increase customer satisfaction and loyalty.
+
+Long-Term Membership Offers: Provide long-term membership offers for casual riders, encouraging them to commit to the service for an extended period. Incentives such as lower monthly rates or added benefits can help convert casual riders into loyal members.
+
+Partnerships and Collaborations: Explore partnerships with local businesses or events to offer promotions to bike-sharing customers. Collaborating with popular venues or events can attract new riders and enhance brand visibility.
+
+Data-Driven Decision-Making: Continuously monitor and analyze bike-sharing data to adapt strategies based on changing usage patterns and customer preferences. Data-driven decision-making will ensure the service remains relevant and competitive.
+
+By sharing these insights and recommendations with the stakeholders, we aim to support data-driven decision-making that leads to a more successful and customer-centric bike-sharing service. Regular updates and collaboration between data analysts and stakeholders are crucial to implement improvements effectively and drive the business towards its goals.
+
+<br>
+<br>
+<br>
+
+Thank you for reviewing this case study! Your feedback is highly appreciated.
+
+**Key Insights:**
+
+* Casual riders have an average trip duration of approximately 22.37 minutes, while annual members average around 12.09 minutes, indicating different riding behaviors.
+* Casual riders tend to use the service more on weekends, while annual members exhibit more consistent usage throughout the week.
+* Identifying peak hours can help optimize bike availability and maintenance.
+
+**Recommendations:**
+
+* Tailor marketing campaigns to target casual riders on weekends and offer time-sensitive membership incentives to annual members.
+* Optimize bike availability during peak hours by redistributing bikes to popular stations and consider dynamic pricing strategies.
+* Improve user experience based on trip duration analysis to enhance customer satisfaction.
+* Evaluate existing membership plans and consider introducing new options based on usage patterns.
+
+Connect with me on LinkedIn: [Aniket Srivastava](https://www.linkedin.com/in/aniketsrivastava2211)
+
+Feel free to reach out if you have any questions or want to discuss the analysis further. Your feedback is invaluable, and I welcome any suggestions for improvement.
